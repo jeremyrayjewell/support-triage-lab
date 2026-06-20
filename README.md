@@ -49,9 +49,9 @@ Support queue, severity counts, and recent login failures.
 
 Saved queries and result tables for support debugging.
 
-![Case studies showing polished support investigation narratives for hiring managers](docs/screenshots/case-studies.png)
+![Case studies showing selected support investigation writeups](docs/screenshots/case-studies.png)
 
-Polished support investigation narratives for hiring managers.
+Selected support investigation writeups for technical support and application support interviews.
 
 ![Tickets showing a browsable support backlog for drilling into evidence](docs/screenshots/tickets.png)
 
@@ -80,7 +80,7 @@ Browsable support backlog for drilling into evidence.
 
 ## Support Investigation Reports
 
-Each ticket detail page includes a generated support investigation report that turns raw case data into a polished markdown-ready handoff. This matters for Technical Support Engineer and Application Support roles because strong support work is not just finding evidence. It is also packaging that evidence into a crisp case summary, customer-safe communication, engineering escalation context, and a clear next action that helps the incident move forward.
+Each ticket detail page includes a generated support investigation report that turns case data into a concise exportable note. For Technical Support Engineer and Application Support roles, this helps show not just what support reviewed, but what still needs engineering verification, what the customer should hear next, and what support already ruled out.
 
 ## Example Interview Talking Points
 

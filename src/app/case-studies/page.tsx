@@ -8,10 +8,10 @@ export default function CaseStudiesPage() {
   return (
     <div className="space-y-6">
       <section className="rounded-[2rem] border border-slate-200/80 bg-slate-950 px-6 py-7 text-white shadow-panel">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-300">Hiring-manager view</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-300">Selected cases</p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">Selected support investigation case studies</h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
-          Three curated cases show how the lab turns ticket triage, SQL evidence, customer updates, and engineering escalation into structured support-engineering narratives.
+          Three sample cases showing ticket triage, SQL evidence, customer updates, and engineering escalation for technical support work.
         </p>
       </section>
 
@@ -54,7 +54,7 @@ export default function CaseStudiesPage() {
                 <StudySection title="Recommended next action" body={caseStudy.report.recommendedNextAction} />
                 <StudySection title="Documentation update" body={caseStudy.report.suggestedDocumentationUpdate} />
                 <div className="rounded-3xl bg-slate-50 px-5 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Markdown-ready case report</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Markdown export</p>
                   <pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap text-xs leading-6 text-slate-700">
                     {caseStudy.markdown}
                   </pre>

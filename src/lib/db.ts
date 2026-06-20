@@ -429,66 +429,71 @@ export function getTicketDetail(ticketId: number) {
 function buildArtifacts(ticket: QueryResultRow): TicketArtifactBundle {
   const issueKey = String(ticket.issue_key);
   const base = {
-    customerReply: `Hi ${ticket.user_name},\n\nThanks for flagging this. We’ve confirmed the issue on the ${ticket.account_name} workspace and are actively investigating the related signals in auth, API, and application telemetry. I’ll keep this case updated with the next checkpoint within 30 minutes, even if the investigation is still in progress.\n\nCurrent focus: ${ticket.summary}\n\nBest,\nSupportOps`,
-    escalationNote: `Account: ${ticket.account_name}\nTicket: #${ticket.id} ${ticket.title}\nSeverity: ${ticket.severity}\nImpact: ${ticket.summary}\nBusiness context: ${ticket.plan} plan, ${ticket.region}, MRR $${ticket.mrr}\nAsk: Please review the correlated logs and confirm whether the most recent deploy or cache state matches the observed failure pattern.`,
+    customerReply: `Hi ${ticket.user_name},\n\nThanks for flagging this. We've confirmed the issue on the ${ticket.account_name} workspace and are reviewing auth, API, and app-event data now. The likely cause is not yet confirmed. I'll send the next update within 30 minutes, even if the investigation is still in progress.\n\nCurrent focus: ${ticket.summary}\n\nBest,\nSupportOps`,
+    escalationNote: `Account: ${ticket.account_name}\nTicket: #${ticket.id} ${ticket.title}\nSeverity: ${ticket.severity}\nUrgency: Active customer impact. Please review in the current support window.\nImpact: ${ticket.summary}\nSupport checked: ticket timeline, account context, login attempts, related API requests, and app events.\nEngineering ask: confirm whether recent deploys, cache state, or backend job failures match this pattern.\nUnknowns: exact trigger and full blast radius still need engineering verification.`,
     checklist: [
       "Confirm scope: single user, cohort, or whole account.",
       "Validate whether the issue started after a deploy, role change, config change, or billing event.",
-      "Review correlated login, API, and app-event telemetry for the same time window.",
+      "Review login, API, and app-event telemetry for the same time window.",
       "Check for duplicate reports or broader account impact before updating severity.",
       "Document customer-safe status and internal next action before handoff.",
     ],
-    rootCause: "Preliminary triage summary pending investigation outcome.",
+    rootCause: "Likely cause not yet confirmed.",
     severity: ticket.severity as TicketArtifactBundle["severity"],
-    nextStep: "Collect timeline evidence and share an internal checkpoint update.",
+    nextStep: "Collect the timeline, post a customer-safe update, and get engineering confirmation on the leading theory.",
   };
 
   if (issueKey === "auth-mfa-reset") {
     return {
       ...base,
-      rootCause: "Likely mismatch between freshly reset MFA state and the cached authentication policy applied to privileged users.",
-      nextStep: "Invalidate auth policy cache for the account and have engineering confirm the MFA reset job output.",
-      escalationNote: `${base.escalationNote}\nSuspicion: MFA reset completed at 16:54 UTC, followed by repeated 401s and login failures with policy mismatch.`,
+      rootCause: "Evidence suggests a mismatch between the MFA reset state and cached auth policy for privileged users, but support cannot confirm that without engineering review.",
+      nextStep: "Ask engineering to verify the MFA reset job output, confirm whether auth policy cache is stale, and advise whether support can safely clear account-level cache.",
+      escalationNote: `Account: ${ticket.account_name}\nTicket: #${ticket.id} ${ticket.title}\nSeverity: ${ticket.severity}\nUrgency: Login issue affecting privileged users. Please review now.\nImpact: ${ticket.summary}\nSupport checked: repeated failed logins, 401 responses, and the MFA reset event at 16:54 UTC.\nEngineering ask: verify whether the MFA reset job completed cleanly and whether auth policy cache for this account is stale.\nUnknowns: whether the issue is limited to admins or affects all users with recent MFA changes.`,
     };
   }
 
   if (issueKey === "api-500-route-sync") {
     return {
       ...base,
-      rootCause: "Route sync worker appears to be timing out after the latest background job deploy, producing repeated 500s on POST /v1/routes/sync.",
-      nextStep: "Compare current worker release against the last known-good build and inspect queue saturation for the route sync job.",
+      rootCause: "Evidence suggests the route sync worker may be timing out after the latest background job deploy, but that still needs engineering verification.",
+      nextStep: "Have engineering compare the current worker release with the last known-good build and confirm whether queue saturation or a deploy regression is driving the 500s.",
+      escalationNote: `Account: ${ticket.account_name}\nTicket: #${ticket.id} ${ticket.title}\nSeverity: ${ticket.severity}\nUrgency: Customer workflow impact; retries are failing.\nImpact: ${ticket.summary}\nSupport checked: repeated 500s on POST /v1/routes/sync, latency increase, and route-sync-worker deploy marker before failures.\nEngineering ask: review route-sync-worker logs, confirm whether the latest deploy introduced timeouts, and advise on rollback versus mitigation.\nUnknowns: whether failures are isolated to this account or reflect a broader worker issue.`,
     };
   }
 
   if (issueKey === "frontend-blank-dashboard") {
     return {
       ...base,
-      rootCause: "Chrome 126 users are hitting a blank dashboard render path tied to the current nav redesign flag and widget state handling.",
-      nextStep: "Roll back or disable the nav redesign flag for affected accounts while frontend engineering validates the render regression.",
+      rootCause: "Evidence suggests Chrome 126 is hitting a blank dashboard render path tied to the current nav redesign flag or widget state handling. Support cannot confirm which path is primary yet.",
+      nextStep: "Ask frontend engineering to confirm whether the nav redesign flag should be disabled for affected accounts while they verify the render regression.",
+      escalationNote: `Account: ${ticket.account_name}\nTicket: #${ticket.id} ${ticket.title}\nSeverity: ${ticket.severity}\nUrgency: Users can log in but cannot use the dashboard.\nImpact: ${ticket.summary}\nSupport checked: duplicate reports on the same account, successful login flow, and blank dashboard events on Chrome 126.\nEngineering ask: review frontend errors for the current dashboard build and confirm whether the nav redesign flag should be disabled.\nUnknowns: whether the issue is limited to Chrome 126 or any account on the current feature flag exposure.`,
     };
   }
 
   if (issueKey === "authz-role-change") {
     return {
       ...base,
-      rootCause: "Role updates are not propagating cleanly to authorization caches, so newly changed users retain stale permissions and hit 403s.",
-      nextStep: "Flush the affected authorization cache entries and confirm whether project settings permissions are recalculated after role writes.",
+      rootCause: "Evidence suggests role changes are not propagating cleanly to authorization caches, so users may be hitting stale permission checks. Engineering still needs to confirm that path.",
+      nextStep: "Have engineering verify permission recalculation after role writes and confirm whether support can clear affected authorization cache entries.",
+      escalationNote: `Account: ${ticket.account_name}\nTicket: #${ticket.id} ${ticket.title}\nSeverity: ${ticket.severity}\nUrgency: Access regression after role change.\nImpact: ${ticket.summary}\nSupport checked: role-change event followed by repeated 403s on settings and export endpoints.\nEngineering ask: confirm whether role changes are leaving stale cache entries and whether permission recompute failed after write.\nUnknowns: whether this is limited to the reported users or all recent role changes on the account.`,
     };
   }
 
   if (issueKey === "webhook-delays") {
     return {
       ...base,
-      rootCause: "Webhook backlog suggests a stalled delivery queue rather than a customer-side endpoint failure.",
-      nextStep: "Measure queue delay, inspect the worker health for delivery processors, and share a mitigation ETA with the customer.",
+      rootCause: "Evidence suggests a stalled delivery queue rather than a customer endpoint failure, but support cannot rule out mixed causes until engineering reviews worker health.",
+      nextStep: "Ask engineering to confirm queue delay, check delivery worker health, and provide a mitigation ETA or replay plan for delayed events.",
+      escalationNote: `Account: ${ticket.account_name}\nTicket: #${ticket.id} ${ticket.title}\nSeverity: ${ticket.severity}\nUrgency: Delayed downstream automations; customer impact is ongoing.\nImpact: ${ticket.summary}\nSupport checked: webhook backlog event, delivery timing, and related 5xx response in webhook traffic.\nEngineering ask: verify queue health, confirm whether deliveries are stalled or partially processing, and advise on replay steps.\nUnknowns: how many events are delayed and whether any were dropped versus only queued.`,
     };
   }
 
   if (issueKey === "billing-subscription-mismatch") {
     return {
       ...base,
-      rootCause: "Billing state is inconsistent: subscription access remains active while the latest invoice failed and seat count exceeds entitlement.",
-      nextStep: "Reconcile invoice status, verify dunning rules, and decide whether access should remain active pending payment retry.",
+      rootCause: "Evidence suggests billing state is out of sync: access remains active while the latest invoice failed and seat usage exceeds entitlement. Support cannot confirm whether this is expected grace-period behavior.",
+      nextStep: "Have engineering or billing operations confirm whether access should remain active, reconcile invoice state, and verify current dunning behavior for this account.",
+      escalationNote: `Account: ${ticket.account_name}\nTicket: #${ticket.id} ${ticket.title}\nSeverity: ${ticket.severity}\nUrgency: Billing inconsistency with customer-visible access state.\nImpact: ${ticket.summary}\nSupport checked: subscription status, invoice status, and seat usage against entitlement.\nEngineering ask: confirm whether billing sync or dunning rules are lagging and whether access should remain active during payment retry.\nUnknowns: whether the mismatch is isolated to this account or part of a broader billing sync issue.`,
     };
   }
 
@@ -578,14 +583,14 @@ function buildSeverityRisk(ticket: QueryResultRow) {
   const now = new Date("2026-06-19T22:00:00Z").getTime();
 
   if (resolutionDue < now) {
-    return `${String(ticket.severity).toUpperCase()} with active SLA risk: the resolution target has already passed, so this case should be treated as a breach candidate and updated with a clear mitigation path immediately.`;
+    return `${String(ticket.severity).toUpperCase()} with active SLA risk. The resolution target has already passed, so support should keep this case in active follow-up until engineering confirms the mitigation path.`;
   }
 
   if (firstResponseDue < now) {
-    return `${String(ticket.severity).toUpperCase()} with response SLA risk: first response is overdue even though the resolution target is still open.`;
+    return `${String(ticket.severity).toUpperCase()} with response SLA risk. First response is overdue even though the resolution target is still open.`;
   }
 
-  return `${String(ticket.severity).toUpperCase()} and currently within SLA, but still high-priority because the symptoms suggest customer-facing impact and cross-system investigation.`;
+  return `${String(ticket.severity).toUpperCase()} and still within SLA. Customer impact is visible, so the case still needs active support follow-up and engineering verification of the likely cause.`;
 }
 
 function getRelatedInvestigations(ticket: QueryResultRow): RelatedInvestigation[] {
@@ -600,14 +605,14 @@ function getRelatedInvestigations(ticket: QueryResultRow): RelatedInvestigation[
   };
 
   const reasonsById: Record<string, string> = {
-    "failed-logins-by-account": "Useful for validating whether login failures are clustered at the account level rather than isolated to one user.",
-    "api-500-spike-by-endpoint": "Useful for confirming whether backend failures are concentrated on one endpoint and whether latency is rising alongside the error volume.",
-    "browser-specific-blank-dashboard": "Useful for tying the symptom to a browser/version-specific UI regression and affected user cohort.",
-    "sla-breach-candidates": "Useful for showing operational urgency and whether the case needs immediate ownership or escalation.",
-    "duplicate-reports": "Useful for checking whether multiple contacts are reporting the same underlying product issue.",
-    "subscription-payment-mismatch": "Useful for reconciling customer-visible access state with billing and entitlement data.",
-    "permission-denied-after-role-change": "Useful for validating the timing between role mutations and permission-denied behavior.",
-    "webhook-delivery-delays": "Useful for measuring backlog severity and identifying delayed downstream automation impact.",
+    "failed-logins-by-account": "Checked to see whether failed logins are clustered at the account level or limited to one user.",
+    "api-500-spike-by-endpoint": "Checked to confirm whether 500s are concentrated on one endpoint and whether latency is rising with the failures.",
+    "browser-specific-blank-dashboard": "Checked to tie the symptom to a browser/version-specific UI issue and identify the affected user cohort.",
+    "sla-breach-candidates": "Checked to confirm urgency and whether the case needs immediate ownership or escalation.",
+    "duplicate-reports": "Checked to see whether multiple contacts are reporting the same underlying issue.",
+    "subscription-payment-mismatch": "Checked to reconcile customer-visible access state with billing and entitlement data.",
+    "permission-denied-after-role-change": "Checked to validate the timing between role changes and permission-denied behavior.",
+    "webhook-delivery-delays": "Checked to measure backlog severity and delayed downstream automation impact.",
   };
 
   return getInvestigationsByIds(idsByIssue[issueKey] ?? ["sla-breach-candidates"]).map((investigation) => ({
@@ -630,14 +635,14 @@ function buildFindings(
 ) {
   const issueKey = String(ticket.issue_key);
   const shared = [
-    `The report includes correlated signals across ticket history, account context, and ${metrics.appEventCount} application events rather than relying on the customer narrative alone.`,
-    `Business context matters here: ${String(ticket.account_name)} is on the ${String(ticket.plan)} plan with MRR $${String(ticket.mrr)} and health score ${String(ticket.health_score)}.`,
+    `Support reviewed the ticket timeline, account context, and ${metrics.appEventCount} related application events instead of relying only on the customer report.`,
+    `${String(ticket.account_name)} is on the ${String(ticket.plan)} plan with MRR $${String(ticket.mrr)} and health score ${String(ticket.health_score)}. That increases urgency, but the likely cause still needs engineering verification.`,
   ];
 
   if (issueKey === "auth-mfa-reset") {
     return [
       `Observed ${metrics.failedLoginCount} failed login attempts and ${metrics.authFailures} HTTP 401 responses shortly after the MFA reset event.`,
-      "The error pattern points to policy validation rather than a general password failure, which narrows the blast radius toward authentication state handling.",
+      "The error pattern points more toward policy validation than a general password failure, but support is unable to rule out a broader auth state issue without engineering review.",
       ...shared,
     ];
   }
@@ -645,7 +650,7 @@ function buildFindings(
   if (issueKey === "api-500-route-sync") {
     return [
       `Observed ${metrics.serverFailures} HTTP 5xx responses on route-sync traffic, with the same endpoint recurring across the related API evidence.`,
-      "A deploy marker for the route-sync worker appears in the event stream before the customer-facing failures, which makes release correlation a strong lead.",
+      "A route-sync worker deploy marker appears before the customer-facing failures. Evidence suggests release correlation, but support cannot confirm causation yet.",
       ...shared,
     ];
   }
@@ -653,7 +658,7 @@ function buildFindings(
   if (issueKey === "frontend-blank-dashboard") {
     return [
       `The account has ${metrics.duplicateTicketCount + 1} active report(s) associated with the same issue pattern, which suggests this is not a single-user problem.`,
-      "App events point to blank dashboard renders on Chrome 126, supporting a browser-specific regression hypothesis.",
+      "App events point to blank dashboard renders on Chrome 126. Evidence suggests a browser-specific regression, but support has not yet ruled out a feature-flag or account-specific factor.",
       ...shared,
     ];
   }
@@ -661,14 +666,14 @@ function buildFindings(
   if (issueKey === "authz-role-change") {
     return [
       `Observed ${metrics.authzFailures} HTTP 403 responses after a role-change event, which points to authorization propagation rather than missing product access.`,
-      "The failure appears immediately after membership changes, making stale cache or delayed permission recomputation more likely than manual misconfiguration.",
+      "The failure appears immediately after membership changes. Evidence suggests stale cache or delayed permission recomputation, though support cannot confirm which path is failing.",
       ...shared,
     ];
   }
 
   if (issueKey === "webhook-delays") {
     return [
-      "The event stream shows backlog detection rather than customer endpoint rejection, which shifts focus to internal queue health.",
+      "The event stream shows backlog detection rather than clear customer endpoint rejection. Support is still unable to rule out a mixed queue and endpoint issue.",
       `Observed ${metrics.serverFailures} HTTP 5xx response(s) in related delivery traffic, supporting an internal processing stall scenario.`,
       ...shared,
     ];
@@ -677,7 +682,7 @@ function buildFindings(
   if (issueKey === "billing-subscription-mismatch") {
     return [
       "Billing evidence shows the subscription still looks active to the customer while invoice state and seat usage are out of sync.",
-      "This case requires both technical validation and an operational decision about entitlement enforcement or grace-period behavior.",
+      "Support still needs engineering or billing operations to confirm whether this reflects an expected grace period, a billing sync lag, or an entitlement bug.",
       ...shared,
     ];
   }
