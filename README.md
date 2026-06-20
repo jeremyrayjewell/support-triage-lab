@@ -82,6 +82,12 @@ The SQLite database is created automatically inside `.data/supportops.db` and re
 
 Each ticket detail page includes a generated support investigation report that turns case data into a concise exportable note. For Technical Support Engineer and Application Support roles, this helps show not just what support reviewed, but what still needs engineering verification, what the customer should hear next, and what support already ruled out.
 
+## Supporting Docs
+
+- [Sample support investigation report](docs/sample-report.md)
+- [Support runbook](docs/support-runbook.md)
+- [Interview talking points](docs/interview-talking-points.md)
+
 ## Example Interview Talking Points
 
 - How the dashboard mirrors a real support queue instead of a generic analytics page
