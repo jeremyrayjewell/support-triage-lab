@@ -6,6 +6,24 @@ SupportOps Triage Lab is a local portfolio project that simulates a B2B SaaS tec
 
 This is a local portfolio lab for demonstration and interview walkthroughs, not a production SaaS product.
 
+## Screenshots
+
+![Dashboard showing support queue severity counts and recent login failures](docs/screenshots/dashboard.png)
+
+Support queue, severity counts, and recent login failures.
+
+![SQL investigations showing saved queries and result tables for support debugging](docs/screenshots/sql-investigations.png)
+
+Saved queries and result tables for support debugging.
+
+![Case studies showing selected support investigation writeups](docs/screenshots/case-studies.png)
+
+Selected support investigation writeups for technical support and application support interviews.
+
+![Tickets showing a browsable support backlog for drilling into evidence](docs/screenshots/tickets.png)
+
+Browsable support backlog for drilling into evidence.
+
 ## What The App Demonstrates
 
 - A seeded SQLite dataset for support workflows across `accounts`, `users`, `tickets`, `login_attempts`, `app_events`, `api_requests`, and `subscriptions`
@@ -38,24 +56,6 @@ npm run dev
 3. Open `http://localhost:3000`
 
 The SQLite database is created automatically inside `.data/supportops.db` and reseeded on startup when the seed version changes.
-
-## Screenshots
-
-![Dashboard showing support queue severity counts and recent login failures](docs/screenshots/dashboard.png)
-
-Support queue, severity counts, and recent login failures.
-
-![SQL investigations showing saved queries and result tables for support debugging](docs/screenshots/sql-investigations.png)
-
-Saved queries and result tables for support debugging.
-
-![Case studies showing selected support investigation writeups](docs/screenshots/case-studies.png)
-
-Selected support investigation writeups for technical support and application support interviews.
-
-![Tickets showing a browsable support backlog for drilling into evidence](docs/screenshots/tickets.png)
-
-Browsable support backlog for drilling into evidence.
 
 ## Support-Engineering Skills Shown
 
@@ -94,6 +94,14 @@ Each ticket detail page includes a generated support investigation report that t
 
 - This is intentionally local-only and does not include auth.
 - The dataset is fake but structured to feel plausible during demos and interviews.
+
+## GitHub Topics
+
+`technical-support`, `application-support`, `support-engineering`, `sql`, `nextjs`, `typescript`, `sqlite`, `portfolio`
+
+## LinkedIn / Resume Blurb
+
+Built a local support-engineering portfolio app that simulates SaaS ticket triage, SQL investigation, SLA prioritization, customer replies, and engineering escalation notes using Next.js, TypeScript, Tailwind, and SQLite. The project includes a realistic support queue, saved SQL investigations, ticket-level evidence views, generated investigation reports, and selected case studies.
 
 ## License
 

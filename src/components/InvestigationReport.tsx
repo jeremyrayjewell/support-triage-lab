@@ -37,7 +37,7 @@ export function InvestigationReport({
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-600">Generate investigation report</p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">{report.title}</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-            A polished support-engineering case report built from the live ticket context, related telemetry, and saved investigation patterns.
+            A support investigation note built from the current ticket context, related telemetry, and saved investigation patterns.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
