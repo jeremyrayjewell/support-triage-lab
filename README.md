@@ -94,3 +94,12 @@ Each ticket detail page includes a generated support investigation report that t
 
 - This is intentionally local-only and does not include auth.
 - The dataset is fake but structured to feel plausible during demos and interviews.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
+
+## Author
+
+Jeremy Ray Jewell  
+[GitHub](https://github.com/jeremyrayjewell) | [LinkedIn](https://www.linkedin.com/in/jeremyrayjewell)
