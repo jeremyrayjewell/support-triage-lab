@@ -7,7 +7,9 @@ const styles: Record<string, string> = {
   "sev-4": "bg-slate-200 text-slate-700 ring-slate-300",
   open: "bg-sky-100 text-sky-700 ring-sky-200",
   investigating: "bg-violet-100 text-violet-700 ring-violet-200",
-  "waiting-on-eng": "bg-fuchsia-100 text-fuchsia-700 ring-fuchsia-200",
+  waiting_on_customer: "bg-cyan-100 text-cyan-700 ring-cyan-200",
+  escalated: "bg-fuchsia-100 text-fuchsia-700 ring-fuchsia-200",
+  resolved: "bg-emerald-100 text-emerald-700 ring-emerald-200",
   default: "bg-slate-100 text-slate-700 ring-slate-200",
 };
 

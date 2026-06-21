@@ -2,6 +2,8 @@ import { DataTable } from "@/components/DataTable";
 import { Panel } from "@/components/Panel";
 import { runSavedInvestigations } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export default function InvestigationsPage() {
   const investigations = runSavedInvestigations();
 

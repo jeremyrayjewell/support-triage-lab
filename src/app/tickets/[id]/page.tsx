@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { updateTicketStatusAction } from "@/app/actions";
 import { Badge } from "@/components/Badge";
 import { DataTable } from "@/components/DataTable";
 import { InvestigationReport } from "@/components/InvestigationReport";
@@ -7,6 +8,8 @@ import { Panel } from "@/components/Panel";
 import { buildInvestigationReport, getTicketDetail } from "@/lib/db";
 import { formatDateTime } from "@/lib/format";
 import { reportToMarkdown } from "@/lib/report-markdown";
+
+export const dynamic = "force-dynamic";
 
 export default async function TicketDetailPage({
   params,
@@ -23,6 +26,10 @@ export default async function TicketDetailPage({
   const { ticket, loginAttempts, apiErrors, appEvents, artifactBundle, accountOpenTickets } = detail;
   const report = buildInvestigationReport(detail);
   const reportMarkdown = reportToMarkdown(report);
+  const markInvestigating = updateTicketStatusAction.bind(null, Number(ticket.id), "investigating");
+  const markEscalated = updateTicketStatusAction.bind(null, Number(ticket.id), "escalated");
+  const markWaitingOnCustomer = updateTicketStatusAction.bind(null, Number(ticket.id), "waiting_on_customer");
+  const markResolved = updateTicketStatusAction.bind(null, Number(ticket.id), "resolved");
 
   return (
     <div className="space-y-6">
@@ -39,7 +46,7 @@ export default async function TicketDetailPage({
           <div className="max-w-4xl">
             <div className="flex flex-wrap items-center gap-2">
               <Badge tone={String(ticket.severity)}>{String(ticket.severity).toUpperCase()}</Badge>
-              <Badge tone={String(ticket.status)}>{String(ticket.status).replace(/-/g, " ")}</Badge>
+              <Badge tone={String(ticket.status)}>{String(ticket.status).replace(/[-_]/g, " ")}</Badge>
               <span className="text-sm uppercase tracking-[0.18em] text-slate-400">{String(ticket.category)}</span>
             </div>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950">{String(ticket.title)}</h1>
@@ -49,6 +56,28 @@ export default async function TicketDetailPage({
             <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Suggested next step</p>
             <p className="mt-2 max-w-xs text-sm leading-6 text-slate-200">{artifactBundle.nextStep}</p>
           </div>
+        </div>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <form action={markInvestigating}>
+            <button type="submit" className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+              Mark investigating
+            </button>
+          </form>
+          <form action={markEscalated}>
+            <button type="submit" className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+              Mark escalated
+            </button>
+          </form>
+          <form action={markWaitingOnCustomer}>
+            <button type="submit" className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+              Mark waiting on customer
+            </button>
+          </form>
+          <form action={markResolved}>
+            <button type="submit" className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-500">
+              Resolve ticket
+            </button>
+          </form>
         </div>
       </section>
 

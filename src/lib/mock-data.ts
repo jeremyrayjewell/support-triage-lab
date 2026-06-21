@@ -171,7 +171,7 @@ export const tickets: TicketSeed[] = [
     account_id: 4,
     user_id: 7,
     title: "Permission denied after manager role change",
-    status: "waiting-on-eng",
+    status: "escalated",
     severity: "sev-2",
     category: "Authorization",
     channel: "Email",

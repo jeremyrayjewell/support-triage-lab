@@ -82,6 +82,14 @@ The SQLite database is created automatically inside `.data/supportops.db` and re
 
 Each ticket detail page includes a generated support investigation report that turns case data into a concise exportable note. For Technical Support Engineer and Application Support roles, this helps show not just what support reviewed, but what still needs engineering verification, what the customer should hear next, and what support already ruled out.
 
+## Queue Simulation Mode
+
+The lab can also be used as a local triage practice simulator. You can move tickets through support statuses, resolve them, and generate new deterministic cases from a fixed set of scenario templates with matching login, API, and app-event evidence. Simulation state is stored in the local SQLite file, so the queue changes persist on your machine until the app data is reset.
+
+## Practice Pack
+
+- [SupportOps Mastery Pack](docs/practice/README.md)
+
 ## Supporting Docs
 
 - [Sample support investigation report](docs/sample-report.md)

@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Panel } from "@/components/Panel";
 import { getCuratedCaseStudies } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export default function CaseStudiesPage() {
   const caseStudies = getCuratedCaseStudies();
 

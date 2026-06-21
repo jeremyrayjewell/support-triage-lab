@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { generateNewTicketAction } from "@/app/actions";
 import { Badge } from "@/components/Badge";
 import { Panel } from "@/components/Panel";
 import { formatDateTime } from "@/lib/format";
 import { getDashboardData } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
 
 export default function DashboardPage() {
   const data = getDashboardData();
@@ -17,6 +20,14 @@ export default function DashboardPage() {
             <p className="mt-3 text-sm leading-6 text-slate-300">
               A local support-engineering workspace for triaging SaaS incidents, correlating SQL evidence, and drafting customer-safe updates.
             </p>
+            <form action={generateNewTicketAction} className="mt-4">
+              <button
+                type="submit"
+                className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15"
+              >
+                Generate New Ticket
+              </button>
+            </form>
           </div>
           <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
             {data.severityCounts.map((row) => (
@@ -57,7 +68,7 @@ export default function DashboardPage() {
                       <td className="px-3 py-3 text-slate-700">{String(ticket.account)}</td>
                       <td className="px-3 py-3 text-slate-700">{String(ticket.category)}</td>
                       <td className="px-3 py-3">
-                        <Badge tone={String(ticket.status)}>{String(ticket.status).replace(/-/g, " ")}</Badge>
+                        <Badge tone={String(ticket.status)}>{String(ticket.status).replace(/[-_]/g, " ")}</Badge>
                       </td>
                       <td className="px-3 py-3 text-slate-500">{formatDateTime(ticket.updated_at)}</td>
                     </tr>

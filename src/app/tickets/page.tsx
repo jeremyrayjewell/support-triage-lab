@@ -1,20 +1,33 @@
 import Link from "next/link";
+import { generateNewTicketAction } from "@/app/actions";
 import { Badge } from "@/components/Badge";
 import { Panel } from "@/components/Panel";
 import { getOpenTickets } from "@/lib/db";
 import { formatDateTime } from "@/lib/format";
+
+export const dynamic = "force-dynamic";
 
 export default function TicketsPage() {
   const tickets = getOpenTickets();
 
   return (
     <div className="space-y-6">
-      <section className="max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-600">Ticket queue</p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Open support tickets</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-600">
-          A practical queue view for browsing the simulated support backlog before drilling into ticket evidence and investigation reports.
-        </p>
+      <section className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="max-w-3xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-600">Ticket queue</p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Open support tickets</h1>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            A practical queue view for browsing the simulated support backlog before drilling into ticket evidence and investigation reports.
+          </p>
+        </div>
+        <form action={generateNewTicketAction}>
+          <button
+            type="submit"
+            className="rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
+          >
+            Generate New Ticket
+          </button>
+        </form>
       </section>
 
       <Panel title="All open tickets" subtitle="Ordered by severity and latest update.">
@@ -44,7 +57,7 @@ export default function TicketsPage() {
                   <td className="px-3 py-3 text-slate-700">{String(ticket.account)}</td>
                   <td className="px-3 py-3 text-slate-700">{String(ticket.category)}</td>
                   <td className="px-3 py-3">
-                    <Badge tone={String(ticket.status)}>{String(ticket.status).replace(/-/g, " ")}</Badge>
+                    <Badge tone={String(ticket.status)}>{String(ticket.status).replace(/[-_]/g, " ")}</Badge>
                   </td>
                   <td className="px-3 py-3 text-slate-500">{formatDateTime(ticket.updated_at)}</td>
                 </tr>
